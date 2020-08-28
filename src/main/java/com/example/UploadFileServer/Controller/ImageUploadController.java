@@ -21,20 +21,19 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
-@RequestMapping(path = "image")
 public class ImageUploadController {
 	@Autowired
 
 	ImageRepository imageRepository;
 
 	@PostMapping("/upload")
-	public BodyBuilder uplaodImage(@RequestParam("imageFile") MultipartFile file) throws IOException {
+	public ResponseEntity<ImageModel> uplaodImage(@RequestParam("imageFile") MultipartFile file)
+			throws IOException, InterruptedException {
 		System.out.println("Original Image Byte Size - " + file.getBytes().length);
 		ImageModel img = new ImageModel(file.getOriginalFilename(), file.getContentType(),
 				compressBytes(file.getBytes()));
 		imageRepository.save(img);
-		return ResponseEntity.status(HttpStatus.OK);
+		return ResponseEntity.ok(img);
 	}
 
 	@GetMapping(path = { "/get/{imageName}" })
